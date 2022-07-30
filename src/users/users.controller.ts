@@ -44,7 +44,6 @@ export class UsersController {
     schema: {
       type: 'object',
       properties: {
-        id: { type: 'string' },
         first_name: { type: 'string' },
         last_name: { type: 'string' },
         email: { type: 'string' },
@@ -58,7 +57,9 @@ export class UsersController {
   }
 
   //PATCH
-  @ApiOperation({ description: 'update specific user by id sent in url param' })
+  @ApiOperation({
+    description: 'update specific user by id sent in url param',
+  })
   @ApiBody({
     schema: {
       type: 'object',
@@ -76,7 +77,9 @@ export class UsersController {
   }
 
   //Delete
-  @ApiOperation({ description: 'delete specific user by id sent in url param' })
+  @ApiOperation({
+    description: 'delete specific user by id sent in url param',
+  })
   @Delete(':id')
   async deleteUser(@Param('id') id: string) {
     return this.usersService.deleteUserById(id);

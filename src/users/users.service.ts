@@ -1,4 +1,8 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './entity/user.entity';
 import { usersData } from './mockedData/users';
 
 //Documentation: https://docs.nestjs.com/providers#services
@@ -6,24 +10,26 @@ import { usersData } from './mockedData/users';
 @Injectable()
 export class UsersService {
   private _users = usersData;
+  constructor(
+    // inyeccion de repositorio para poder usar los metodos de la entidad
+    @InjectRepository(User) private readonly _userRepository: Repository<User>,
+  ) {}
 
   async getAllUsers(limit = 0) {
-    if (limit) {
-      return this._users.slice(0, limit);
-    }
-    return this._users;
+    return await this._userRepository.find();
   }
   async getUserById(id: string) {
     const user = this._users.find((user) => user.id === parseInt(id));
+
     if (!user) {
       throw new HttpException('not found', 400);
     }
     return user;
   }
 
-  async createUser(body: any) {
-    this._users.push(body);
-    return body;
+  async createUser(body) {
+    const user = await this._userRepository.create(body);
+    await this._userRepository.save(user);
   }
 
   async updateUserById(body: any, id) {
